@@ -15,35 +15,49 @@ For the latest updates see the [CHANGELOG.md](https://github.com/node-red/node-r
 
 ![Dashboard example](http://nodered.org/images/dashboarde.png)
 
+##Notice! this is not the official node-red-dashboard.
+This is a fork which solves a very specific requirement- widget
+state is emitted only to the socket origin that caused the change. For example, if two users have the same dashboard open
+and one user types into a text input, the other user will not get the text update. This works well when a typical web form
+like behavior is needed- multiple users can use the same dashboard url as a form to submit data back to the flow. This
+version of the dashboard can be installed along with the original node-red-dashboard- the UI configuration for the two
+dashboards are distinct and the settings appear in different tabs in the sidebar. Note that this changes the behavior of
+the original node-red-dashboard - specifically, one user's changes could overwrite another's without them knowing about it.
+In that sense, this dashboard is multi-user only for input- all dashboard users still share the same backend instance.
+
+Most of the documentation is left as is from the original project as it is applicable to the current project as well.
+
 ## Pre-requisites
 
 The Node-RED-Dashboard requires [Node-RED](https://nodered.org) to be installed.
 
 ## Install
 
-To install the stable version use the `Menu - Manage palette` option and search for `node-red-dashboard`, or run the following command in your Node-RED user directory - typically `~/.node-red`:
+To install the stable version use the `Menu - Manage palette` option and search for `node-red-contrib-mudashboard`, or run the following command in your Node-RED user directory - typically `~/.node-red`:
 
-    npm i node-red-dashboard
+    npm i node-red-contrib-mudashboard
 
-Restart your Node-RED instance and you should have UI nodes available in the palette and a new `dashboard` tab in the
-right side panel. The UI interface is available at <http://localhost:1880/ui> (if the default settings are used).
+Restart your Node-RED instance and you should have UI nodes available in the palette and a new `mudashboard` tab in the
+right side panel. The UI interface is available at <http://localhost:1880/mudashboard> (if the default settings are used).
 
 If you want to try the latest version from github, you can install it by
 
-    npm i node-red/node-red-dashboard
+    npm i meeki007/node-red-contrib-mudashboard
 
 ## Settings
 
-The default url for the dashboard is based off your existing Node-RED httpRoot path with /ui added. This can be changed in your Node-RED settings.js file.
+The default url for the mudashboard can be changed in your Node-RED settings.js file by adding it below the default ui path.
 
 ```
 ui: { path: "ui" },
+mudashboard: { path: "new_url" },
 ```
 
-You can also add your own express middleware to handle the http requests by using the `ui: { middleware: your_function }` property in settings.js. For example
+
+You can also add your own express middleware to handle the http requests by using the `mudashboard: { middleware: your_function }` property in settings.js. For example
 
 ```
-ui: { middleware: function (req, res, next) {
+mudashboard: { middleware: function (req, res, next) {
             // Do something more interesting here.
             console.log('LOGGED')
             next()
@@ -54,7 +68,7 @@ ui: { middleware: function (req, res, next) {
 You can also add middleware to the websocket connection using
 
 ```
-ui: { ioMiddleware: function (socket, next) {
+mudashboard: { ioMiddleware: function (socket, next) {
             // Do something more interesting here.
             console.log('HELLO')
             next()
@@ -66,11 +80,11 @@ ui: { ioMiddleware: function (socket, next) {
 
 Setting your own ioMiddleware will disable the default cross domain origin check.
 
-You can also set the dashboard to be read only by `ui: { readOnly: true }`. This does not stop the user interacting with the dashboard but does ignore all updates coming from the dashboard.
+You can also set the dashboard to be read only by `mudashboard: { readOnly: true }`. This does not stop the user interacting with the dashboard but does ignore all updates coming from the dashboard.
 
 Finally you can customise the default Group name (for i18n) by setting
 ```
-ui: { defaultGroup: "Better Default" }
+mudashboard: { defaultGroup: "Better Default" }
 ```
 
 You can of course combine any combination of these properties
@@ -134,7 +148,15 @@ to help pick up the theme colours.
 
 #### Widgets
 
-Don't forget there are also extra ui widgets available on the [Node-RED flows](http://flows.nodered.org) website. Search for node-ui- or contrib-ui- .
+***Important***
+If a widget state on a dashboard changes, such as the button widget gets clicked, the event is emitted only to the users from which it originated; its socketid. When sending payloads to populate a widget, without the click of a button, its best to use the ui control widget to send the event with the users socketid to trigger a payload that is then sent to the widget.
+
+Messages coming from the dashboard do have a msg.socketid, and updates like change of tab, notifications, and audio alerts will be directed only to that session.
+For example sendind a message with a ui wdget button click to all sessions would require you to store all socketid's to an array and then send the message to all socketid's
+
+See example flows PUT URL LINKS TO THE EXAMPLES
+
+Don't forget there are also extra mudashboard ui widgets available on the [Node-RED flows](http://flows.nodered.org) website. Search for mudashboard-ui.
 
 Group labels are optional.
 
@@ -233,51 +255,13 @@ docs <http://nodered.org/docs/security>
 
 ## Multiple Users
 
-This Dashboard does NOT support multiple individual users. It is a view of the status of the underlying
-Node-RED flow, which itself is single user. If the state of the flow changes then all clients will get
-notified of that change.
-
 Messages coming from the dashboard **do** have a `msg.socketid`, and updates like change of tab,
 notifications, and audio alerts will be directed only to that session. Delete the `msg.sessionid` to send
 to all sessions.
 
-## Discussions and suggestions
+## Issues & pull requests
 
-Use the Node-RED Discourse Forum: https://discourse.nodered.org/c/dashboard
-or the Dashboard-ui channel in <a href="http://nodered.org/slack/">Slack</a> to ask
-questions or to discuss new features.
-
-The current work in progress list is shown in the
-<a href="https://github.com/node-red/node-red-dashboard/projects/1" target="_blank"> Github Project</a>.
-
-## Contributing
-
-Before raising a pull-request, please read our
-[contributing guide](https://github.com/node-red/node-red-dashboard/blob/master/CONTRIBUTING.md).
-
-This project adheres to the [Contributor Covenant 1.4](http://contributor-covenant.org/version/1/4/).
-By participating, you are expected to uphold this code. Please report unacceptable
-behavior to any of the [project's core team](https://github.com/orgs/node-red/teams/core).
-
-## Developers
-
-```
-cd ~\.node-red\node_modules
-git clone https://github.com/node-red/node-red-dashboard.git
-cd node-red-dashboard
-npm install
-```
-The plugin uses the ```dist``` folder if it exists. Make sure it has been deleted if you want to use the non-minified version while developing.
-After finishing changes to the front-end code in the src folder, you can use ```gulp``` to update and rebuild the minified files and update the *appcache* manifest.
-
-    gulp
-
-We also have suggested *lint* and *js* styles that can be checked with:
-
-    gulp lint
-    gulp jscs
-
-If submitting a Pull Request (PR) please do NOT include the minified `/dist` files.
+Use githubs issues section: https://github.com/meeki007/node-red-contrib-mudashboard/issues
 
 Thank you.
 
