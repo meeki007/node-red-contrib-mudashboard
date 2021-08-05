@@ -1,4 +1,4 @@
-# node-red-dashboard
+# node-red-contrib-mudashboard
 
 [![platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
 ![NPM version](https://badge.fury.io/js/node-red-dashboard.svg)
