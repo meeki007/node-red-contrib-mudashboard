@@ -135,7 +135,7 @@ function add(opt) {
         opt.storeFrontEndInputAsState = true;
     }
     if (typeof opt.persistantFrontEndValue === 'undefined') {
-        opt.persistantFrontEndValue = true;
+        opt.persistantFrontEndValue = false;
     }
     opt.convert = opt.convert || noConvert;
     opt.beforeEmit = opt.beforeEmit || beforeEmit;
@@ -149,7 +149,7 @@ function add(opt) {
             var state = replayMessages[opt.node.id];
             if (!state) { replayMessages[opt.node.id] = state = {id: opt.node.id}; }
             state.disabled = !msg.enabled;
-            io.emit(updateValueEventName, state); // dcj mu
+            //io.emit(updateValueEventName, state); // dcj mu
         }
 
         // remove res and req as they are often circular
@@ -252,13 +252,13 @@ function add(opt) {
             addField("icon");
             if (msg.hasOwnProperty("enabled")) { toEmit.disabled = !msg.enabled; }
             toEmit.id = toStore.id = opt.node.id;
-            //toEmit.socketid = msg.socketid; // dcj mu
+            toEmit.socketid = msg.socketid; // dcj mu
             // Emit and Store the data
             //if (settings.verbose) { console.log("UI-EMIT",JSON.stringify(toEmit)); }
             emitSocket(updateValueEventName, toEmit);
-            if (opt.persistantFrontEndValue === true) {
-                replayMessages[opt.node.id] = toStore;
-            }
+            //if (opt.persistantFrontEndValue === true) {
+            //    replayMessages[opt.node.id] = toStore;
+            //}
 
             // Handle the node output
             if (opt.forwardInputMessages && opt.node._wireCount && fullDataset !== undefined) {
@@ -277,9 +277,9 @@ function add(opt) {
         var converted = opt.convertBack(msg.value);
         if (opt.storeFrontEndInputAsState === true) {
             currentValues[msg.id] = converted;
-            if (opt.persistantFrontEndValue === true) {
+            //if (opt.persistantFrontEndValue === true) {
                 replayMessages[msg.id] = msg;
-            }
+            //}
         }
         var toSend = {payload:converted};
         toSend = opt.beforeSend(toSend, msg) || toSend;
@@ -320,11 +320,11 @@ function join() {
 }
 
 function init(server, app, log, redSettings) {
-    var uiSettings = redSettings.ui || {};
+    var uiSettings = redSettings.mudashboard || {};
     if ((uiSettings.hasOwnProperty("path")) && (typeof uiSettings.path === "string")) {
         settings.path = uiSettings.path;
     }
-    else { settings.path = 'ui'; }
+    else { settings.path = 'mudashboard'; }
     if ((uiSettings.hasOwnProperty("readOnly")) && (typeof uiSettings.readOnly === "boolean")) {
         settings.readOnly = uiSettings.readOnly;
     }
@@ -352,7 +352,7 @@ function init(server, app, log, redSettings) {
             app.use( join(settings.path), dashboardMiddleware, serveStatic(path.join(__dirname, "dist")) );
         }
         else {
-            log.info("[Dashboard] Dashboard using development folder");
+            log.info("[Dashboard] mudashboard using development folder");
             app.use(join(settings.path), dashboardMiddleware, serveStatic(path.join(__dirname, "src")));
             var vendor_packages = [
                 'angular', 'angular-sanitize', 'angular-animate', 'angular-aria', 'angular-material', 'angular-touch',
@@ -366,7 +366,7 @@ function init(server, app, log, redSettings) {
         }
     });
 
-    log.info("Dashboard version " + dashboardVersion + " started at " + fullPath);
+    log.info("mudashboard version " + dashboardVersion + " started at " + fullPath);
 
     if (typeof uiSettings.ioMiddleware === "function") {
         io.use(uiSettings.ioMiddleware);
@@ -578,8 +578,8 @@ function addBaseConfig(config) {
     if (config) { baseConfiguration = config; }
     mani.name = config.site ? config.site.name : "Node-RED Dashboard";
     mani.short_name = mani.name.replace("Node-RED","").trim();
-    mani.background_color = config.theme.themeState["page-titlebar-backgroundColor"].value;
-    mani.theme_color = config.theme.themeState["page-titlebar-backgroundColor"].value;
+    mani.background_color = config.theme.themeState["m-page-titlebar-backgroundColor"].value;
+    mani.theme_color = config.theme.themeState["m-page-titlebar-backgroundColor"].value;
     updateUi();
 }
 
