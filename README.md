@@ -1,8 +1,8 @@
 # node-red-contrib-mudashboard
 
 [![platform](https://img.shields.io/badge/platform-Node--RED-red)](https://nodered.org)
-![NPM version](https://badge.fury.io/js/node-red-dashboard.svg)
-![NPM](https://img.shields.io/npm/l/node-red-dashboard)
+![NPM version](https://badge.fury.io/js/node-red-contrib-mudashboard.svg)
+![NPM](https://img.shields.io/npm/l/node-red-contrib-mudashboard)
 
 This module provides a set of nodes in Node-RED to quickly create a live data dashboard.
 
