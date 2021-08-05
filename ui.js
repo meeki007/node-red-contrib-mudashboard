@@ -46,9 +46,9 @@ ev.setMaxListeners(0);
 
 // default manifest.json to be returned as required.
 var mani = {
-    "name": "Node-RED Dashboard",
-    "short_name": "Dashboard",
-    "description": "A dashboard for Node-RED",
+    "name": "node-red-contrib-mudashboard",
+    "short_name": "mudashboard",
+    "description": "A modification of node-red-dashboard project that lets multiple users input data without updating other users screens",
     "start_url": "./#/0",
     "background_color": "#910000",
     "theme_color": "#910000",

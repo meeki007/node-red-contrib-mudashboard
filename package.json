@@ -1,7 +1,7 @@
 {
-    "name": "node-red-dashboard",
-    "version": "0.0.1.",
-    "description": "A set of dashboard nodes for Node-RED",
+    "name": "node-red-contrib-mudashboard",
+    "version": "0.0.2",
+    "description": "A modification of node-red-dashboard project that lets multiple users input data without updating other users screens",
     "keywords": [
         "node-red"
     ],

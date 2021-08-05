@@ -32,7 +32,7 @@ function init(RED) {
        * [width] - width of widget (default automatic)
        * [height] - height of widget (default automatic)
        * [order] - property to hold the placement order of the widget (default 0)
-       * [templateScope] - scope of widget/global or local (default local)
+       * [templateScope] - scope of widhget/global or local (default local)
        * [emitOnlyNewValues] - boolean (default true).
              If true, it checks if the payload changed before sending it
              to the front-end. If the payload is the same no message is sent.
