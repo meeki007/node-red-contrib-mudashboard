@@ -3,6 +3,7 @@
 
 This issue tracker is for problems with the node-red-contrib-mudashboard only.
   - issues with things that work in node-red-dashboard but not node-red-contrib-mudashboard
+  - issues with the event that is emitted only to the dashboard from which it originated
 
 If your issue is node-red-dashboard related and not node-red-contrib-mudashboard:
 
